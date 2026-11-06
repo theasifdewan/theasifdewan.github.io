@@ -1,388 +1,433 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Asif Dewan</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
-/* Layout concept: one left-aligned column of content with a narrow label rail,
-   under a hero that carries a generated terrain-contour drawing (the delta, drawn in code). */
-:root {
-  --bg: #F2F5F4;
-  --surface: #E6EDEB;
-  --fg: #13222A;
-  --muted: #51656C;
-  --line: #C6D3D0;
-  --accent: #0B6E75;
-  --accent-ink: #FFFFFF;
-  --sand: #8F5F25;
-  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
-  --font-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0C181D; --surface: #13242B; --fg: #E4EEEC; --muted: #93A9AE;
-    --line: #243A41; --accent: #5CC8BF; --accent-ink: #06201E; --sand: #D9A55E;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0C181D; --surface: #13242B; --fg: #E4EEEC; --muted: #93A9AE;
-  --line: #243A41; --accent: #5CC8BF; --accent-ink: #06201E; --sand: #D9A55E;
-  color-scheme: dark;
-}
-
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  padding-block: 1.25rem 3rem;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.wrap { max-width: 64rem; margin: 0 auto; }
-a { color: var(--accent); text-underline-offset: 3px; }
-a:hover { text-decoration-thickness: 2px; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
-h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
-p { margin: 0; }
-
-/* top bar */
-.bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 1rem; }
-.mark { font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.bar nav { display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-.bar nav a { font-size: 0.9375rem; color: var(--fg); text-decoration: none; }
-.bar nav a:hover { color: var(--accent); }
-.theme { font: inherit; font-size: 0.8125rem; font-family: var(--font-mono); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 0.3rem 0.65rem; cursor: pointer; }
-.theme:hover { border-color: var(--accent); color: var(--accent); }
-
-/* hero */
-.hero { padding-block: 2.5rem 1rem; }
-.coords { font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sand); }
-.hero h1 { font-size: clamp(2.75rem, 9vw, 5.75rem); line-height: 0.98; letter-spacing: -0.035em; font-weight: 700; margin-top: 0.75rem; }
-.role { font-family: var(--font-display); font-size: clamp(1.15rem, 2.6vw, 1.6rem); font-weight: 500; margin-top: 1rem; color: var(--accent); }
-.lede { max-width: 38rem; margin-top: 1.25rem; font-size: 1.1875rem; color: var(--fg); }
-.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
-.btn { font: inherit; font-weight: 600; font-size: 0.9375rem; padding: 0.7rem 1.15rem; border-radius: 5px; border: 1px solid var(--accent); text-decoration: none; cursor: pointer; display: inline-block; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); }
-.btn.ghost { background: transparent; color: var(--accent); }
-.btn:hover { filter: brightness(1.08); }
-.terrain-wrap { margin-top: 2.5rem; }
-#terrain { display: block; width: 100%; max-width: 100%; height: 11.5rem; background: var(--surface); border-radius: 6px; }
-.caption { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
-
-/* sections */
-.sec { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 1.25rem 3rem; padding-block: 3rem 1rem; border-top: 1px solid var(--line); margin-top: 3rem; }
-.sec[hidden] { display: none; }
-.sec > h2 { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding-top: 0.35rem; }
-.stack { display: flex; flex-direction: column; gap: 2rem; min-width: 0; }
-.about p + p { margin-top: 1rem; }
-.about { max-width: 40rem; }
-
-.entry { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
-.entry + .entry { border-top: 1px solid var(--line); padding-top: 2rem; }
-.entry h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
-.meta { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--sand); letter-spacing: 0.02em; }
-.entry p { max-width: 40rem; color: var(--fg); }
-.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
-.tag { font-family: var(--font-mono); font-size: 0.75rem; border: 1px solid var(--line); border-radius: 4px; padding: 0.15rem 0.5rem; color: var(--muted); }
-.entry .more { margin-top: 0.25rem; font-weight: 600; font-size: 0.9375rem; }
-
-.skillgroup { display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); gap: 0.5rem 1.5rem; }
-.skillgroup + .skillgroup { margin-top: 1.5rem; }
-.skillgroup h3 { font-family: var(--font-body); font-size: 1rem; font-weight: 600; padding-top: 0.2rem; }
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; min-width: 0; }
-.chip { font-size: 0.9375rem; padding: 0.3rem 0.75rem; border-radius: 999px; background: var(--surface); color: var(--fg); }
-
-.contact-email { font-family: var(--font-mono); font-size: clamp(1rem, 3.4vw, 1.35rem); overflow-wrap: anywhere; user-select: all; }
-.status { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent); min-height: 1.25rem; }
-.linklist { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
-footer { margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
-
-@media (max-width: 720px) {
-  .sec { grid-template-columns: minmax(0, 1fr); gap: 0.75rem; padding-top: 2rem; margin-top: 2rem; }
-  .skillgroup { grid-template-columns: minmax(0, 1fr); }
-  .bar nav a.hide-sm { display: none; }
-}
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f2f5f4">
+  <meta name="description" content="Portfolio of Asif Dewan — IT graduate working with machine learning, remote sensing, research data, and technical writing in Dhaka, Bangladesh.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Asif Dewan — IT, Machine Learning & Research">
+  <meta property="og:description" content="IT graduate working with machine learning, remote sensing, research data, and technical writing in Dhaka, Bangladesh.">
+  <title>Asif Dewan — IT, Machine Learning & Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f2f5f4;
+      --surface: #e6edeb;
+      --fg: #13222a;
+      --muted: #51656c;
+      --line: #c6d3d0;
+      --accent: #0b6e75;
+      --accent-ink: #fff;
+      --sand: #80531e;
+      --focus: #a33b00;
+      --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0c181d;
+      --surface: #13242b;
+      --fg: #e4eeec;
+      --muted: #a6b9bd;
+      --line: #32484f;
+      --accent: #70d6cc;
+      --accent-ink: #06201e;
+      --sand: #e3b978;
+      --focus: #ffd166;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]):not([data-theme="dark"]) {
+        color-scheme: dark;
+        --bg: #0c181d;
+        --surface: #13242b;
+        --fg: #e4eeec;
+        --muted: #a6b9bd;
+        --line: #32484f;
+        --accent: #70d6cc;
+        --accent-ink: #06201e;
+        --sand: #e3b978;
+        --focus: #ffd166;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+    body {
+      min-width: 320px;
+      margin: 0;
+      padding: 1rem max(1rem, env(safe-area-inset-right)) 3rem max(1rem, env(safe-area-inset-left));
+      background: var(--bg);
+      color: var(--fg);
+      font: 400 1.0625rem/1.65 var(--font-body);
+    }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:hover { text-decoration-thickness: 2px; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; border-radius: 3px; }
+    h1, h2, h3 { margin: 0; font-family: var(--font-display); line-height: 1.15; text-wrap: balance; }
+    p { margin: 0; }
+    button { font: inherit; }
+    .wrap { width: min(100%, 64rem); margin-inline: auto; }
+    .skip-link { position: absolute; z-index: 10; top: .5rem; left: .5rem; padding: .6rem .9rem; transform: translateY(-160%); background: var(--fg); color: var(--bg); }
+    .skip-link:focus { transform: translateY(0); }
+    .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+    .mark { color: var(--muted); font: 500 .8125rem/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+    .bar nav { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .75rem 1.15rem; }
+    .bar nav a { color: var(--fg); font-size: .9375rem; text-decoration: none; }
+    .bar nav a:hover { color: var(--accent); }
+    .theme, .btn { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .45rem; border: 1px solid var(--accent); border-radius: 5px; padding: .55rem .9rem; cursor: pointer; font-weight: 600; text-decoration: none; }
+    .theme { min-height: 40px; border-color: var(--line); background: transparent; color: var(--fg); font: 500 .8rem var(--font-mono); }
+    .theme:hover { border-color: var(--accent); color: var(--accent); }
+    .hero { padding-block: clamp(2.5rem, 8vw, 5rem) 1rem; }
+    .coords, .meta, .caption, .eyebrow { color: var(--sand); font: 500 .8125rem/1.5 var(--font-mono); letter-spacing: .035em; }
+    .hero h1 { margin-top: .7rem; font-size: clamp(2.75rem, 9vw, 5.75rem); letter-spacing: -.04em; }
+    .role { margin-top: .8rem; color: var(--accent); font: 500 clamp(1.2rem, 3vw, 1.65rem)/1.3 var(--font-display); }
+    .lede { max-width: 43rem; margin-top: 1.2rem; font-size: clamp(1.05rem, 2.5vw, 1.2rem); }
+    .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+    .btn.primary { background: var(--accent); color: var(--accent-ink); }
+    .btn.ghost { background: transparent; color: var(--accent); }
+    .btn:hover { filter: brightness(1.08); }
+    .terrain-wrap { margin-top: 2.5rem; }
+    #terrain { display: block; width: 100%; height: 11rem; border-radius: 6px; background: var(--surface); }
+    .caption { margin-top: .5rem; color: var(--muted); font-size: .75rem; }
+    .sec { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 1.25rem 3rem; margin-top: 3rem; padding-block: 2.25rem .25rem; border-top: 1px solid var(--line); }
+    .sec[hidden] { display: none; }
+    .sec > h2 { padding-top: .25rem; color: var(--muted); font: 500 .8125rem/1.5 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+    .about { max-width: 42rem; }
+    .about p + p { margin-top: 1rem; }
+    .stack { display: flex; min-width: 0; flex-direction: column; gap: 1.75rem; }
+    .entry { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: .45rem; }
+    .entry + .entry { padding-top: 1.75rem; border-top: 1px solid var(--line); }
+    .entry h3 { font-size: 1.35rem; letter-spacing: -.015em; }
+    .entry p { max-width: 43rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .25rem; }
+    .tag { border: 1px solid var(--line); border-radius: 4px; padding: .12rem .5rem; color: var(--muted); font: 400 .75rem/1.6 var(--font-mono); }
+    .entry .more { margin-top: .2rem; font-weight: 600; }
+    .skillgroup { display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); gap: .5rem 1.5rem; }
+    .skillgroup + .skillgroup { margin-top: 1.35rem; }
+    .skillgroup h3 { padding-top: .2rem; font: 600 1rem/1.4 var(--font-body); }
+    .chips { display: flex; min-width: 0; flex-wrap: wrap; gap: .5rem; }
+    .chip { border-radius: 999px; padding: .25rem .7rem; background: var(--surface); color: var(--fg); font-size: .9rem; }
+    .contact-email { overflow-wrap: anywhere; font: 500 clamp(1rem, 3.4vw, 1.35rem)/1.5 var(--font-mono); user-select: all; }
+    .status { min-height: 1.5rem; color: var(--accent); font: 500 .8rem/1.5 var(--font-mono); }
+    .linklist { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+    footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font: 400 .75rem/1.6 var(--font-mono); }
+    @media (max-width: 720px) {
+      .sec { grid-template-columns: minmax(0, 1fr); gap: .75rem; margin-top: 2rem; padding-top: 1.75rem; }
+      .skillgroup { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+    }
+    @media (max-width: 480px) {
+      body { padding-inline: max(.875rem, env(safe-area-inset-left)) max(.875rem, env(safe-area-inset-right)); }
+      .bar { align-items: flex-start; }
+      .bar nav { gap: .5rem .75rem; }
+      .bar nav a.hide-sm { display: none; }
+      .mark { padding-top: .55rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+    @media print {
+      :root { color-scheme: light; --bg: #fff; --surface: #f1f1f1; --fg: #111; --muted: #444; --line: #bbb; --accent: #064f55; --accent-ink: #fff; --sand: #555; }
+      body { padding: 0; font-size: 10.5pt; }
+      .bar, .actions, .terrain-wrap, .skip-link { display: none !important; }
+      .hero { padding-top: 0; }
+      .sec { break-inside: avoid; margin-top: 1.25rem; padding-top: 1rem; }
+      a { color: inherit; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="bar">
-    <span class="mark" id="mark"></span>
-    <nav aria-label="Sections">
-      <a class="hide-sm" href="#research" onclick="go(event,'research')">Research</a>
-      <a class="hide-sm" href="#projects" onclick="go(event,'projects')">Projects</a>
-      <a class="hide-sm" href="#skills" onclick="go(event,'skills')">Skills</a>
-      <a href="#contact" onclick="go(event,'contact')">Contact</a>
-      <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">Theme</button>
-    </nav>
-  </header>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="wrap">
+    <header class="bar">
+      <span class="mark" id="mark">AD / portfolio</span>
+      <nav aria-label="Main navigation">
+        <a class="hide-sm" href="#research">Research</a>
+        <a class="hide-sm" href="#projects">Projects</a>
+        <a class="hide-sm" href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+        <button class="theme" id="theme" type="button" aria-label="Switch color theme">Use dark theme</button>
+      </nav>
+    </header>
 
-  <section class="hero" aria-labelledby="name">
-    <div class="coords" id="coords"></div>
-    <h1 id="name"></h1>
-    <div class="role" id="role"></div>
-    <p class="lede" id="summary"></p>
-    <div class="actions">
-      <a class="btn primary" href="#projects" onclick="go(event,'projects')">See my work</a>
-      <button class="btn ghost" type="button" id="copy-hero">Copy email</button>
-    </div>
-    <div class="terrain-wrap">
-      <canvas id="terrain" aria-hidden="true"></canvas>
-      <div class="caption">Contour study drawn in code. Area of work: river deltas and floodplains of Bangladesh.</div>
-    </div>
-  </section>
-
-  <section class="sec" id="about"><h2>About</h2><div class="about" id="about-body"></div></section>
-  <section class="sec" id="research"><h2>Research</h2><div class="stack" id="research-body"></div></section>
-  <section class="sec" id="projects"><h2>Projects</h2><div class="stack" id="projects-body"></div></section>
-  <section class="sec" id="skills"><h2>Skills</h2><div id="skills-body"></div></section>
-  <section class="sec" id="experience"><h2>Experience</h2><div class="stack" id="experience-body"></div></section>
-  <section class="sec" id="education"><h2>Education</h2><div class="stack" id="education-body"></div></section>
-  <section class="sec" id="contact">
-    <h2>Contact</h2>
-    <div class="stack">
-      <p id="availability"></p>
-      <div>
-        <div class="contact-email" id="email"></div>
+    <main id="main">
+      <section class="hero" aria-labelledby="name">
+        <p class="coords" id="coords"></p>
+        <h1 id="name"></h1>
+        <p class="role" id="role"></p>
+        <p class="lede" id="summary"></p>
         <div class="actions">
-          <button class="btn primary" type="button" id="copy-contact">Copy email</button>
-          <a class="btn ghost" id="mailto" href="#">Open in mail app</a>
+          <a class="btn primary" href="#projects">Explore my work</a>
+          <a class="btn ghost" href="#contact">Get in touch</a>
         </div>
-        <div class="status" id="status" role="status" aria-live="polite"></div>
-      </div>
-      <div class="linklist" id="links"></div>
-    </div>
-  </section>
+        <div class="terrain-wrap">
+          <canvas id="terrain" aria-hidden="true"></canvas>
+          <p class="caption">A generative contour study inspired by the river deltas and floodplains of Bangladesh.</p>
+        </div>
+      </section>
 
-  <footer id="footer"></footer>
-</div>
+      <section class="sec" id="about" aria-labelledby="about-title">
+        <h2 id="about-title">About</h2><div class="about" id="about-body"></div>
+      </section>
+      <section class="sec" id="research" aria-labelledby="research-title">
+        <h2 id="research-title">Research</h2><div class="stack" id="research-body"></div>
+      </section>
+      <section class="sec" id="projects" aria-labelledby="projects-title">
+        <h2 id="projects-title">Projects</h2><div class="stack" id="projects-body"></div>
+      </section>
+      <section class="sec" id="skills" aria-labelledby="skills-title">
+        <h2 id="skills-title">Skills</h2><div id="skills-body"></div>
+      </section>
+      <section class="sec" id="experience" aria-labelledby="experience-title">
+        <h2 id="experience-title">Experience</h2><div class="stack" id="experience-body"></div>
+      </section>
+      <section class="sec" id="education" aria-labelledby="education-title">
+        <h2 id="education-title">Education</h2><div class="stack" id="education-body"></div>
+      </section>
+      <section class="sec" id="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title">Contact</h2>
+        <div class="stack">
+          <p id="availability"></p>
+          <div>
+            <a class="contact-email" id="email-link"></a>
+            <div class="actions">
+              <button class="btn primary" type="button" id="copy-contact">Copy email</button>
+              <a class="btn ghost" id="mailto">Open in mail app</a>
+            </div>
+            <p class="status" id="status" role="status" aria-live="polite"></p>
+          </div>
+          <nav class="linklist" id="links" aria-label="External profiles and documents"></nav>
+        </div>
+      </section>
+    </main>
+    <footer id="footer"></footer>
+  </div>
 
-<script>
-/* ==========================================================================
-   EDIT HERE. Everything on the page is generated from this one object.
-   - Add a skill: put a new string inside an "items" list.
-   - Add a skill group: copy one { group, items } block.
-   - Add a project or paper: copy one block inside "projects" or "research".
-   - A link left as "" is hidden automatically. Fill in the URL to show it.
-   - A list left empty ([]) hides its whole section.
-   ========================================================================== */
-const P = {
-  name: "Asif Dewan",
-  role: "IT graduate. Machine learning and remote sensing researcher.",
-  coords: "23.81°N 90.41°E  ·  Dhaka, Bangladesh",
-  summary: "I build machine learning pipelines for satellite data and support students and teams with research, data work and technical writing. I am looking for an entry-level IT role in Dhaka.",
-  availability: "Open to entry-level, full-time IT roles in Dhaka, especially in IT enabled services.",
-  email: "theasifdewan@gmail.com",
-  links: [
-    { label: "LinkedIn", url: "https://www.linkedin.com/in/theasifdewan" },
-    { label: "GitHub", url: "https://github.com/theasifdewan" },
-    { label: "Google Scholar", url: "https://scholar.google.com/citations?user=theasifdewan" },
-    { label: "CV (PDF link)", url: "https://drive.google.com/file/d/18_2xU7vdavudDooYfpl0ZqBTDAeNlKek/view?usp=drive_link" }
-  ],
-  about: [
-    "I hold an MSc in Information Technology from Jahangirnagar University and a BSc in Computer Science and Engineering. My own research applies deep learning to environmental problems in Bangladesh, using satellite imagery to map floods and water quality.",
-    "Alongside research, I work as an academic support resource: I help students shape thesis documents in LaTeX, build Python and machine learning pipelines, and prepare papers for submission."
-  ],
-thesis: [
-  { title: "Colorectal cancer histopathology", meta: "Deep learning thesis",
-    text: "A reliability audit of a ResNet-18 classifier on the NCT-CRC-HE-100K histopathology dataset, focused on model calibration.",
-    tags: ["ResNet-18", "Histopathology", "Model calibration"], link: "" },
-  { title: "Systemic lupus erythematosus (SLE)", meta: "Explainable machine learning thesis",
-    text: "Explainable machine learning for biomarker discovery in systemic lupus erythematosus.",
-    tags: ["Explainable ML", "Biomarkers", "SLE"], link: "" },
-  { title: "Kidney stone detection", meta: "Deep learning thesis",
-    text: "A hybrid model that combines VGG19 with a Vision Transformer to detect kidney stones in medical images.",
-    tags: ["VGG19", "Vision Transformer", "Medical imaging"], link: "" }
-]
-  ],
-  projects: [
-    {
-      title: "Online food ordering web app",
-      meta: "Web",
-      text: "A food ordering site where users browse a menu and place orders.",
-      tags: ["HTML", "CSS", "JavaScript", "XML"],
-      link: ""
-    },
-    {
-      title: "Store management system",
-      meta: "Web  ·  Database",
-      text: "A database-backed website for managing store inventory and records.",
-      tags: ["DBMS", "Web"],
-      link: ""
-    },
-    {
-      title: "Movie ticket booking app",
-      meta: "Android",
-      text: "An Android app for choosing a show and booking tickets.",
-      tags: ["Android"],
-      link: ""
-    },
-    {
-      title: "Gas leakage detection and protection system",
-      meta: "Hardware + software",
-      text: "A system that detects a gas leak and triggers a protective response.",
-      tags: ["Sensors", "Embedded"],
-      link: ""
-    },
-    {
-      title: "Billing app for a small retail shop",
-      meta: "In progress  ·  Web",
-      text: "Product search with sizes, bill totals and printing, built for a friend's shop.",
-      tags: ["JavaScript", "Web app"],
-      link: ""
-    },
-    {
-      title: "Online shopping store",
-      meta: "C",
-      text: "A console shopping store built to practise data structures and algorithms.",
-      tags: ["C", "Data structures", "Algorithms"],
-      link: ""
+  <script>
+    'use strict';
+    // Update this object with verified details and working links before publishing.
+    const P = {
+      name: 'Asif Dewan',
+      role: 'IT graduate | Machine learning | Remote sensing',
+      coords: '23.81°N 90.41°E · Dhaka, Bangladesh',
+      summary: 'I build machine-learning workflows for satellite data and support research through data work, Python, and technical writing. I am seeking an entry-level IT role in Dhaka.',
+      availability: 'Open to entry-level, full-time IT roles in Dhaka, especially in IT-enabled services.',
+      email: 'theasifdewan@gmail.com',
+      links: [
+        { label: 'LinkedIn', url: 'https://www.linkedin.com/in/theasifdewan' },
+        { label: 'GitHub', url: 'https://github.com/theasifdewan' },
+        { label: 'Download CV', url: 'https://drive.google.com/file/d/18_2xU7vdavudDooYfpl0ZqBTDAeNlKek/view?usp=drive_link' }
+      ],
+      about: [
+        'I hold an MSc in Information Technology from Jahangirnagar University and a BSc in Computer Science and Engineering. My research interests include applying machine learning to environmental and health-related data.',
+        'I also support students and research teams with LaTeX thesis formatting, Python and machine-learning workflows, data work, and research-paper preparation.'
+      ],
+      research: [
+        {
+          title: 'Colorectal cancer histopathology',
+          meta: 'Deep learning thesis',
+          text: 'A reliability-focused evaluation of a ResNet-18 classifier on the NCT-CRC-HE-100K histopathology dataset, with attention to model calibration.',
+          tags: ['ResNet-18', 'Histopathology', 'Model calibration'],
+          link: ''
+        },
+        {
+          title: 'Systemic lupus erythematosus (SLE)',
+          meta: 'Explainable machine-learning thesis',
+          text: 'Exploring explainable machine-learning methods for biomarker discovery in systemic lupus erythematosus.',
+          tags: ['Explainable ML', 'Biomarkers', 'SLE'],
+          link: ''
+        },
+        {
+          title: 'Kidney stone detection',
+          meta: 'Deep learning thesis',
+          text: 'A proposed hybrid approach combining VGG19 and a Vision Transformer to detect kidney stones in medical images.',
+          tags: ['VGG19', 'Vision Transformer', 'Medical imaging'],
+          link: ''
+        }
+      ],
+      projects: [
+        { title: 'Online food ordering web app', meta: 'Web application', text: 'A food-ordering website for browsing a menu and placing orders.', tags: ['HTML', 'CSS', 'JavaScript', 'XML'], link: '' },
+        { title: 'Store management system', meta: 'Web application · Database', text: 'A database-backed website for managing store inventory and records.', tags: ['Database', 'Web'], link: '' },
+        { title: 'Movie ticket booking app', meta: 'Android application', text: 'An Android app concept for selecting a show and booking tickets.', tags: ['Android'], link: '' },
+        { title: 'Gas-leak detection and protection system', meta: 'Hardware + software', text: 'A sensor-based system designed to detect a gas leak and trigger a protective response.', tags: ['Sensors', 'Embedded systems'], link: '' },
+        { title: 'Retail billing app', meta: 'In progress · Web application', text: 'A small-shop billing app with product search, size options, bill totals, and printing.', tags: ['JavaScript', 'Web app'], link: '' },
+        { title: 'Online shopping store', meta: 'C programming project', text: 'A console-based shopping program created to practise data structures and algorithms.', tags: ['C', 'Data structures', 'Algorithms'], link: '' }
+      ],
+      skills: [
+        { group: 'IT and documentation', items: ['IT support', 'Microsoft Word', 'Microsoft PowerPoint', 'Technical documentation'] },
+        { group: 'Data and machine learning', items: ['Python', 'Data analysis', 'Machine-learning algorithms', 'Deep learning: CNNs and LSTMs'] },
+        { group: 'Research', items: ['Remote sensing', 'Research writing', 'LaTeX'] },
+        { group: 'Web and software', items: ['HTML', 'CSS', 'JavaScript', 'C', 'Database management'] }
+      ],
+      experience: [
+        { title: 'Academic support and research assistance', meta: 'Ongoing', text: 'Supporting students with thesis writing and LaTeX formatting, building Python and machine-learning workflows, and preparing research papers.', tags: [], link: '' }
+      ],
+      education: [
+        { title: 'MSc in Information Technology', meta: 'Jahangirnagar University · 2025', text: 'CGPA: 3.71 / 4.00', tags: [], link: '' },
+        { title: 'BSc in Computer Science and Engineering', meta: 'Gono Bishwabidyalay · 2024', text: '', tags: [], link: '' }
+      ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const make = (tag, className, text) => {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined && text !== null) node.textContent = text;
+      return node;
+    };
+
+    function renderEntries(sectionId, items, linkLabel) {
+      const section = $(sectionId);
+      const body = $(sectionId + '-body');
+      if (!Array.isArray(items) || items.length === 0) {
+        section.hidden = true;
+        return;
+      }
+      for (const item of items) {
+        const article = make('article', 'entry');
+        article.append(make('h3', '', item.title));
+        if (item.meta) article.append(make('p', 'meta', item.meta));
+        if (item.text) article.append(make('p', '', item.text));
+        if (Array.isArray(item.tags) && item.tags.length) {
+          const tags = make('div', 'tags');
+          for (const label of item.tags) tags.append(make('span', 'tag', label));
+          article.append(tags);
+        }
+        if (item.link) {
+          const link = make('a', 'more', linkLabel);
+          link.href = item.link;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          article.append(link);
+        }
+        body.append(article);
+      }
     }
-  ],
-  skills: [
-    { group: "IT and support", items: ["IT support service", "MS Word", "MS PowerPoint", "Technical documentation"] },
-    { group: "Data and ML", items: ["Machine learning algorithms", "Data analysis", "Deep learning (CNN, LSTM)", "Python"] },
-    { group: "Research", items: ["Research skills", "Remote sensing", "Paper writing", "LaTeX"] },
-    { group: "Web and software", items: ["HTML", "CSS", "JavaScript", "C", "DBMS"] }
-  ],
-  experience: [
-    {
-      title: "Academic support and research assistance",
-      meta: "Ongoing",
-      text: "Supporting students with thesis writing and LaTeX formatting, building Python and machine learning pipelines, and preparing research papers.",
-      tags: [],
-      link: ""
+
+    document.title = P.name + ' — Portfolio';
+    $('mark').textContent = P.name.split(/\s+/).map((part) => part[0]).join('') + ' / portfolio';
+    $('coords').textContent = P.coords;
+    $('name').textContent = P.name;
+    $('role').textContent = P.role;
+    $('summary').textContent = P.summary;
+    for (const paragraph of P.about) $('about-body').append(make('p', '', paragraph));
+    renderEntries('research', P.research, 'View research');
+    renderEntries('projects', P.projects, 'View project');
+    renderEntries('experience', P.experience, 'More information');
+    renderEntries('education', P.education, 'More information');
+
+    if (Array.isArray(P.skills) && P.skills.length) {
+      for (const group of P.skills) {
+        if (!Array.isArray(group.items) || group.items.length === 0) continue;
+        const row = make('div', 'skillgroup');
+        row.append(make('h3', '', group.group));
+        const chips = make('div', 'chips');
+        for (const skill of group.items) chips.append(make('span', 'chip', skill));
+        row.append(chips);
+        $('skills-body').append(row);
+      }
+    } else {
+      $('skills').hidden = true;
     }
-  ],
-  education: [
-    { title: "MSc in Information Technology", meta: "Jahangirnagar University  ·  2025", text: "CGPA 3.71 / 4.00", tags: [], link: "" },
-    { title: "BSc in Computer Science and Engineering", meta: "Gono Bishwabidyalay  ·  2024", text: "", tags: [], link: "" }
-  ]
-};
 
-/* ---------- rendering (no need to edit below) ---------- */
-const $ = (id) => document.getElementById(id);
-const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
-
-function entry(item) {
-  const box = el("article", "entry");
-  box.appendChild(el("h3", "", item.title));
-  if (item.meta) box.appendChild(el("div", "meta", item.meta));
-  if (item.text) box.appendChild(el("p", "", item.text));
-  if (item.tags && item.tags.length) {
-    const t = el("div", "tags");
-    item.tags.forEach((x) => t.appendChild(el("span", "tag", x)));
-    box.appendChild(t);
-  }
-  if (item.link) {
-    const a = el("a", "more", "View project");
-    a.href = item.link; a.target = "_blank"; a.rel = "noopener";
-    box.appendChild(a);
-  }
-  return box;
-}
-function fillList(id, list) {
-  const sec = $(id), body = $(id + "-body");
-  if (!list || !list.length) { sec.hidden = true; return; }
-  list.forEach((i) => body.appendChild(entry(i)));
-}
-
-document.title = P.name;
-$("mark").textContent = P.name.split(" ").map((w) => w[0]).join("") + " / portfolio";
-$("coords").textContent = P.coords;
-$("name").textContent = P.name;
-$("role").textContent = P.role;
-$("summary").textContent = P.summary;
-P.about.forEach((t) => $("about-body").appendChild(el("p", "", t)));
-fillList("research", P.research);
-fillList("projects", P.projects);
-fillList("experience", P.experience);
-fillList("education", P.education);
-
-if (P.skills && P.skills.length) {
-  P.skills.forEach((g) => {
-    if (!g.items || !g.items.length) return;
-    const row = el("div", "skillgroup");
-    row.appendChild(el("h3", "", g.group));
-    const chips = el("div", "chips");
-    g.items.forEach((s) => chips.appendChild(el("span", "chip", s)));
-    row.appendChild(chips);
-    $("skills-body").appendChild(row);
-  });
-} else { $("skills").hidden = true; }
-
-$("availability").textContent = P.availability;
-$("email").textContent = P.email;
-$("mailto").href = "mailto:" + P.email;
-P.links.filter((l) => l.url).forEach((l) => {
-  const a = el("a", "", l.label); a.href = l.url; a.target = "_blank"; a.rel = "noopener";
-  $("links").appendChild(a);
-});
-$("footer").textContent = P.name + "  ·  " + new Date().getFullYear();
-
-/* copy email, with a fallback that selects the text if the clipboard is blocked */
-function copyEmail() {
-  const done = (msg) => { $("status").textContent = msg; setTimeout(() => { $("status").textContent = ""; }, 3000); };
-  const select = () => {
-    const r = document.createRange(); r.selectNodeContents($("email"));
-    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
-    done("Email selected. Press copy on your device.");
-  };
-  try {
-    navigator.clipboard.writeText(P.email).then(() => done("Email copied."), select);
-  } catch (e) { select(); }
-}
-$("copy-hero").addEventListener("click", copyEmail);
-$("copy-contact").addEventListener("click", copyEmail);
-
-function go(ev, id) { ev.preventDefault(); const t = $(id); if (t && !t.hidden) t.scrollIntoView({ behavior: "smooth", block: "start" }); }
-
-/* terrain drawing */
-function draw() {
-  const c = $("terrain"), r = c.getBoundingClientRect();
-  if (!r.width) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
-  const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  x.clearRect(0, 0, r.width, r.height);
-  const cs = getComputedStyle(document.documentElement);
-  const line = cs.getPropertyValue("--line").trim(), acc = cs.getPropertyValue("--accent").trim();
-  const n = 24;
-  for (let i = 0; i < n; i++) {
-    const strong = i % 6 === 0;
-    x.beginPath();
-    for (let px = 0; px <= r.width; px += 5) {
-      const t = px / r.width;
-      const y = r.height * (0.1 + 0.82 * i / n)
-        + Math.sin(t * 5.2 + i * 0.33) * 15 * (1 - i / n * 0.45)
-        + Math.sin(t * 12 - i * 0.21) * 4.5;
-      px === 0 ? x.moveTo(px, y) : x.lineTo(px, y);
+    $('availability').textContent = P.availability;
+    const emailLink = $('email-link');
+    emailLink.textContent = P.email;
+    emailLink.href = 'mailto:' + P.email;
+    $('mailto').href = 'mailto:' + P.email;
+    for (const profile of P.links.filter((item) => item.url)) {
+      const link = make('a', '', profile.label);
+      link.href = profile.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      $('links').append(link);
     }
-    x.strokeStyle = strong ? acc : line;
-    x.lineWidth = strong ? 1.7 : 1;
-    x.stroke();
-  }
-}
-draw();
-if (window.ResizeObserver) new ResizeObserver(draw).observe($("terrain")); else addEventListener("resize", draw);
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
-$("theme").addEventListener("click", () => {
-  const root = document.documentElement;
-  const cur = root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  root.dataset.theme = cur === "dark" ? "light" : "dark";
-  draw();
-});
-</script>
+    $('footer').textContent = P.name + ' · ' + new Date().getFullYear();
+
+    async function copyEmail() {
+      const status = $('status');
+      try {
+        if (!navigator.clipboard || !window.isSecureContext) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(P.email);
+        status.textContent = 'Email copied to clipboard.';
+      } catch {
+        const field = make('textarea', 'visually-hidden');
+        field.value = P.email;
+        field.setAttribute('readonly', '');
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        document.body.append(field);
+        field.select();
+        const copied = document.execCommand('copy');
+        field.remove();
+        status.textContent = copied ? 'Email copied to clipboard.' : 'Copy did not work; use the email link above.';
+      }
+      window.setTimeout(() => { status.textContent = ''; }, 3500);
+    }
+    $('copy-contact').addEventListener('click', copyEmail);
+
+    const root = document.documentElement;
+    const themeButton = $('theme');
+    const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    let savedTheme = null;
+    try { savedTheme = localStorage.getItem('portfolio-theme'); } catch { /* Storage may be disabled. */ }
+    if (savedTheme === 'light' || savedTheme === 'dark') root.dataset.theme = savedTheme;
+
+    function updateThemeButton() {
+      const dark = root.dataset.theme ? root.dataset.theme === 'dark' : themeQuery.matches;
+      themeButton.textContent = dark ? 'Use light theme' : 'Use dark theme';
+      themeButton.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+      themeButton.setAttribute('aria-pressed', String(dark));
+      drawTerrain();
+    }
+    themeButton.addEventListener('click', () => {
+      const currentlyDark = root.dataset.theme ? root.dataset.theme === 'dark' : themeQuery.matches;
+      root.dataset.theme = currentlyDark ? 'light' : 'dark';
+      try { localStorage.setItem('portfolio-theme', root.dataset.theme); } catch { /* Theme still works for this page view. */ }
+      updateThemeButton();
+    });
+    if (themeQuery.addEventListener) themeQuery.addEventListener('change', () => { if (!root.dataset.theme) updateThemeButton(); });
+    else if (themeQuery.addListener) themeQuery.addListener(() => { if (!root.dataset.theme) updateThemeButton(); });
+
+    function drawTerrain() {
+      const canvas = $('terrain');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      context.clearRect(0, 0, rect.width, rect.height);
+      const styles = getComputedStyle(root);
+      const line = styles.getPropertyValue('--line').trim();
+      const accent = styles.getPropertyValue('--accent').trim();
+      const count = 24;
+      for (let i = 0; i < count; i++) {
+        context.beginPath();
+        for (let x = 0; x <= rect.width; x += 5) {
+          const t = x / rect.width;
+          const y = rect.height * (0.1 + 0.82 * i / count)
+            + Math.sin(t * 5.2 + i * 0.33) * 15 * (1 - i / count * 0.45)
+            + Math.sin(t * 12 - i * 0.21) * 4.5;
+          if (x === 0) context.moveTo(x, y); else context.lineTo(x, y);
+        }
+        const highlighted = i % 6 === 0;
+        context.strokeStyle = highlighted ? accent : line;
+        context.lineWidth = highlighted ? 1.7 : 1;
+        context.stroke();
+      }
+    }
+    updateThemeButton();
+    if ('ResizeObserver' in window) new ResizeObserver(drawTerrain).observe($('terrain'));
+    else window.addEventListener('resize', drawTerrain);
+  </script>
 </body>
 </html>
