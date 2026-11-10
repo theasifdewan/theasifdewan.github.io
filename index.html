@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#f2f5f4">
-  <meta name="description" content="Portfolio of Asif Dewan — IT graduate working with machine learning, remote sensing, research data, and technical writing in Dhaka, Bangladesh.">
+  <meta name="description" content="Portfolio of Asif Dewan — IT graduate working with machine learning, , research data, and technical writing in Dhaka, Bangladesh.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Asif Dewan — IT, Machine Learning & Research">
-  <meta property="og:description" content="IT graduate working with machine learning, remote sensing, research data, and technical writing in Dhaka, Bangladesh.">
+  <meta property="og:description" content="IT graduate working with machine learning, , research data, and technical writing in Dhaka, Bangladesh.">
   <title>Asif Dewan — IT, Machine Learning & Research</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,14 +16,14 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f2f5f4;
-      --surface: #e6edeb;
+      --bg: #f4f7f5;
+      --surface: #e8efec;
       --fg: #13222a;
       --muted: #51656c;
       --line: #c6d3d0;
-      --accent: #0b6e75;
+      --accent: #087f73;
       --accent-ink: #fff;
-      --sand: #80531e;
+      --sand: #765322;
       --focus: #a33b00;
       --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
       --font-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
@@ -31,27 +31,27 @@
     }
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #0c181d;
-      --surface: #13242b;
+      --bg: #0b1718;
+      --surface: #132725;
       --fg: #e4eeec;
       --muted: #a6b9bd;
       --line: #32484f;
-      --accent: #70d6cc;
+      --accent: #70d8bd;
       --accent-ink: #06201e;
-      --sand: #e3b978;
+      --sand: #e6c281;
       --focus: #ffd166;
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]):not([data-theme="dark"]) {
         color-scheme: dark;
-        --bg: #0c181d;
-        --surface: #13242b;
+        --bg: #0b1718;
+        --surface: #132725;
         --fg: #e4eeec;
         --muted: #a6b9bd;
         --line: #32484f;
-        --accent: #70d6cc;
+        --accent: #70d8bd;
         --accent-ink: #06201e;
-        --sand: #e3b978;
+        --sand: #e6c281;
         --focus: #ffd166;
       }
     }
@@ -71,7 +71,7 @@
     h1, h2, h3 { margin: 0; font-family: var(--font-display); line-height: 1.15; text-wrap: balance; }
     p { margin: 0; }
     button { font: inherit; }
-    .wrap { width: min(100%, 64rem); margin-inline: auto; }
+    .wrap { width: min(100%, 70rem); margin-inline: auto; }
     .skip-link { position: absolute; z-index: 10; top: .5rem; left: .5rem; padding: .6rem .9rem; transform: translateY(-160%); background: var(--fg); color: var(--bg); }
     .skip-link:focus { transform: translateY(0); }
     .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
@@ -82,26 +82,27 @@
     .theme, .btn { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .45rem; border: 1px solid var(--accent); border-radius: 5px; padding: .55rem .9rem; cursor: pointer; font-weight: 600; text-decoration: none; }
     .theme { min-height: 40px; border-color: var(--line); background: transparent; color: var(--fg); font: 500 .8rem var(--font-mono); }
     .theme:hover { border-color: var(--accent); color: var(--accent); }
-    .hero { padding-block: clamp(2.5rem, 8vw, 5rem) 1rem; }
+    .hero { position: relative; isolation: isolate; overflow: hidden; margin-top: 1.25rem; padding: clamp(2rem, 6vw, 4.75rem); border: 1px solid var(--line); border-radius: 10px; background: radial-gradient(ellipse at 92% 8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 38%), var(--surface); }
     .coords, .meta, .caption, .eyebrow { color: var(--sand); font: 500 .8125rem/1.5 var(--font-mono); letter-spacing: .035em; }
-    .hero h1 { margin-top: .7rem; font-size: clamp(2.75rem, 9vw, 5.75rem); letter-spacing: -.04em; }
+    .hero h1 { max-width: 12ch; margin-top: .7rem; font-size: clamp(2.75rem, 9vw, 5.75rem); letter-spacing: -.04em; }
     .role { margin-top: .8rem; color: var(--accent); font: 500 clamp(1.2rem, 3vw, 1.65rem)/1.3 var(--font-display); }
     .lede { max-width: 43rem; margin-top: 1.2rem; font-size: clamp(1.05rem, 2.5vw, 1.2rem); }
     .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
     .btn.primary { background: var(--accent); color: var(--accent-ink); }
     .btn.ghost { background: transparent; color: var(--accent); }
     .btn:hover { filter: brightness(1.08); }
-    .terrain-wrap { margin-top: 2.5rem; }
-    #terrain { display: block; width: 100%; height: 11rem; border-radius: 6px; background: var(--surface); }
+    .terrain-wrap { margin-top: 2rem; }
+    #terrain { display: block; width: 100%; height: 9rem; border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); border-radius: 7px; background: color-mix(in srgb, var(--bg) 35%, transparent); }
     .caption { margin-top: .5rem; color: var(--muted); font-size: .75rem; }
     .sec { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 1.25rem 3rem; margin-top: 3rem; padding-block: 2.25rem .25rem; border-top: 1px solid var(--line); }
     .sec[hidden] { display: none; }
     .sec > h2 { padding-top: .25rem; color: var(--muted); font: 500 .8125rem/1.5 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
     .about { max-width: 42rem; }
     .about p + p { margin-top: 1rem; }
-    .stack { display: flex; min-width: 0; flex-direction: column; gap: 1.75rem; }
-    .entry { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: .45rem; }
-    .entry + .entry { padding-top: 1.75rem; border-top: 1px solid var(--line); }
+    .stack { display: flex; min-width: 0; flex-direction: column; gap: .85rem; }
+    .entry { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: .5rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: 7px; background: color-mix(in srgb, var(--surface) 54%, transparent); transition: border-color .18s ease, transform .18s ease; }
+    .entry:hover { border-color: var(--accent); transform: translateY(-2px); }
+    
     .entry h3 { font-size: 1.35rem; letter-spacing: -.015em; }
     .entry p { max-width: 43rem; }
     .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .25rem; }
@@ -111,7 +112,7 @@
     .skillgroup + .skillgroup { margin-top: 1.35rem; }
     .skillgroup h3 { padding-top: .2rem; font: 600 1rem/1.4 var(--font-body); }
     .chips { display: flex; min-width: 0; flex-wrap: wrap; gap: .5rem; }
-    .chip { border-radius: 999px; padding: .25rem .7rem; background: var(--surface); color: var(--fg); font-size: .9rem; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: .25rem .7rem; background: var(--surface); color: var(--fg); font-size: .9rem; }
     .contact-email { overflow-wrap: anywhere; font: 500 clamp(1rem, 3.4vw, 1.35rem)/1.5 var(--font-mono); user-select: all; }
     .status { min-height: 1.5rem; color: var(--accent); font: 500 .8rem/1.5 var(--font-mono); }
     .linklist { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
@@ -139,6 +140,27 @@
       .sec { break-inside: avoid; margin-top: 1.25rem; padding-top: 1rem; }
       a { color: inherit; }
     }
+    body { position: relative; background-image: radial-gradient(ellipse at 12% 18%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30%), radial-gradient(ellipse at 88% 54%, color-mix(in srgb, var(--sand) 6%, transparent), transparent 28%); }
+    .bar { position: sticky; z-index: 5; top: .75rem; margin-top: .35rem; padding: .55rem .75rem; border: 1px solid color-mix(in srgb, var(--line) 78%, transparent); border-radius: 9px; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .bar nav a { padding: .4rem .55rem; border-radius: 5px; transition: color .2s ease, background .2s ease; }
+    .bar nav a:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+    .hero { box-shadow: 0 18px 60px color-mix(in srgb, var(--fg) 7%, transparent); animation: hero-in .7s cubic-bezier(.2,.7,.2,1) both; }
+    .hero::after { position: absolute; z-index: -1; top: -8rem; right: -6rem; width: 26rem; aspect-ratio: 1; border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); border-radius: 50%; box-shadow: 0 0 0 2rem color-mix(in srgb, var(--accent) 4%, transparent), 0 0 0 4rem color-mix(in srgb, var(--accent) 3%, transparent); content: ''; animation: orbit-drift 18s ease-in-out infinite alternate; }
+    .hero h1 { background: linear-gradient(110deg, var(--fg) 24%, var(--accent) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .btn { border-radius: 7px; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+    .btn:hover { filter: none; transform: translateY(-2px); box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 18%, transparent); }
+    .btn.primary:hover { background: color-mix(in srgb, var(--accent) 88%, var(--fg)); }
+    .sec { animation: section-in .65s both; animation-timeline: view(); animation-range: entry 0% entry 22%; }
+    .entry { box-shadow: 0 5px 18px color-mix(in srgb, var(--fg) 3%, transparent); }
+    .entry:hover { box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 11%, transparent); }
+    .tag, .chip { transition: border-color .2s ease, color .2s ease, transform .2s ease; }
+    .chip:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    #terrain { opacity: .9; }
+    @keyframes hero-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes orbit-drift { from { transform: translate3d(0, 0, 0) rotate(-8deg); } to { transform: translate3d(-14px, 18px, 0) rotate(8deg); } }
+    @keyframes section-in { from { opacity: .35; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 720px) { .hero { padding: clamp(1.4rem, 6vw, 2.5rem); } .bar { top: .4rem; } }
+    @media (prefers-reduced-motion: reduce) { .hero, .hero::after, .sec { animation: none; } .entry, .btn, .chip { transition: none; } }
   </style>
 </head>
 <body>
@@ -213,10 +235,10 @@
     // Update this object with verified details and working links before publishing.
     const P = {
       name: 'Asif Dewan',
-      role: 'IT graduate | Machine learning | Remote sensing',
+      role: 'Machine learning · Research data · IT',
       coords: '23.81°N 90.41°E · Dhaka, Bangladesh',
-      summary: 'I build machine-learning workflows for satellite data and support research through data work, Python, and technical writing. I am seeking an entry-level IT role in Dhaka.',
-      availability: 'Open to entry-level, full-time IT roles in Dhaka, especially in IT-enabled services.',
+      summary: 'IT graduate working at the intersection of machine learning, research data, and practical software. I turn complex data into clear, useful work—and bring the same care to documentation and technical support.',
+      availability: 'Open to entry-level, full-time IT opportunities in Dhaka, especially across IT services, data, and research support.',
       email: 'theasifdewan@gmail.com',
       links: [
         { label: 'LinkedIn', url: 'https://www.linkedin.com/in/theasifdewan' },
@@ -224,8 +246,8 @@
         { label: 'Download CV', url: 'https://drive.google.com/file/d/18_2xU7vdavudDooYfpl0ZqBTDAeNlKek/view?usp=drive_link' }
       ],
       about: [
-        'I hold an MSc in Information Technology from Jahangirnagar University and a BSc in Computer Science and Engineering. My research interests include applying machine learning to environmental and health-related data.',
-        'I also support students and research teams with LaTeX thesis formatting, Python and machine-learning workflows, data work, and research-paper preparation.'
+        'I hold an MSc in Information Technology from Jahangirnagar University (CGPA 3.71/4.00) and a BSc in Computer Science and Engineering. I am interested in applying machine learning to environmental and health data.',
+        'Alongside my research, I help students and research teams prepare clear, reproducible work—from Python and machine-learning workflows to LaTeX theses and research papers.'
       ],
       research: [
         {
@@ -261,7 +283,7 @@
       skills: [
         { group: 'IT and documentation', items: ['IT support', 'Microsoft Word', 'Microsoft PowerPoint', 'Technical documentation'] },
         { group: 'Data and machine learning', items: ['Python', 'Data analysis', 'Machine-learning algorithms', 'Deep learning: CNNs and LSTMs'] },
-        { group: 'Research', items: ['Remote sensing', 'Research writing', 'LaTeX'] },
+        { group: 'Research', items: ['', 'Research writing', 'LaTeX'] },
         { group: 'Web and software', items: ['HTML', 'CSS', 'JavaScript', 'C', 'Database management'] }
       ],
       experience: [
@@ -431,3 +453,5 @@
   </script>
 </body>
 </html>
+
+
